@@ -1,0 +1,6 @@
+@PersonalNotesApi_HostAddress = http://localhost:5027
+
+GET {{PersonalNotesApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

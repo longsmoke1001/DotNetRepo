@@ -1,0 +1,12 @@
+using PersonalNotesApi.Models;
+
+namespace PersonalNotesApi.Services;
+
+public interface INoteService
+{
+    List<Note> GetAllNotes();
+    Note? GetNoteById(int id);
+    Note CreateNote(Note note);
+    Note? UpdateNote(int id, Note updatedNote);
+    bool DeleteNote(int id);
+}
