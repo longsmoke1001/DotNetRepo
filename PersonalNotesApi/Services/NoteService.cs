@@ -49,4 +49,11 @@ public class NoteService : INoteService
         _context.SaveChanges();
         return true;
     }
+
+    public List<Note> GetNotesByCategory(NoteCategory category)
+{
+    return _context.Notes
+                   .Where(n => n.Category == category)
+                   .ToList();
+}
 }

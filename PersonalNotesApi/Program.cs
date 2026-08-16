@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore;
+using PersonalNotesApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<INoteService, NoteService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=personalnotes.db"));
 var app = builder.Build();

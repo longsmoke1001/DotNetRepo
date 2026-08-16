@@ -9,18 +9,17 @@ namespace PersonalNotesApi.Controllers;
 [Route("api/[controller]")]
 public class NotesController : ControllerBase
 {
-    private readonly AppDbContext _context;
-
-    public NotesController(AppDbContext context)
+    private readonly INoteService _noteService;  // 改用 Service
+    public NotesController(INoteService noteService)
     {
-        _context = context;
+        _noteService = noteService;
     }
 
     // GET: /api/notes
     [HttpGet]
     public IActionResult GetAll()
     {
-        GetAllNotes();
+        var notes = _noteService.GetAllNotes();
         return Ok(notes);
     }
 
@@ -28,13 +27,20 @@ public class NotesController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult GetById(int id)
     {
-        var note = _context.Notes.Find(id);
+        var note = _noteService.GetNoteById(id);
         if (note == null)
         {
             return NotFound();
         }
         return Ok(note);
     }
+
+    [HttpGet("category/{category}")] // 新的路由，例如: GET /api/notes/category/日記
+public IActionResult GetByCategory(NoteCategory category)
+{
+    var notes = _noteService.GetNotesByCategory(category);
+    return Ok(notes);
+}
 
     // POST: /api/notes
     [HttpPost]
@@ -46,8 +52,7 @@ public class NotesController : ControllerBase
         }
 
         newNote.CreatedAt = DateTime.Now;
-        _context.Notes.Add(newNote);
-        _context.SaveChanges();
+        _noteService.CreateNote(newNote);
 
         return CreatedAtAction(nameof(GetById), new { id = newNote.Id }, newNote);
     }

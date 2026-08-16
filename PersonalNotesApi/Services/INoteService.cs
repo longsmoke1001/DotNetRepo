@@ -9,4 +9,5 @@ public interface INoteService
     Note CreateNote(Note note);
     Note? UpdateNote(int id, Note updatedNote);
     bool DeleteNote(int id);
+    List<Note> GetNotesByCategory(NoteCategory category); // 新方法
 }
