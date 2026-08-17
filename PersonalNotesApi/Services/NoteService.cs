@@ -51,9 +51,9 @@ public class NoteService : INoteService
     }
 
     public List<Note> GetNotesByCategory(NoteCategory category)
-{
-    return _context.Notes
-                   .Where(n => n.Category == category)
-                   .ToList();
-}
+    {
+        return _context.Notes
+                       .Where(n => n.Category == category)
+                       .ToList();
+    }
 }
