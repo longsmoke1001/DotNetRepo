@@ -102,7 +102,7 @@ public class NoteService : INoteService
         return true;
     }
 
-    public async Task<List<NoteDto>?> GetNotesByCategoryAsync(string category)
+    public async Task<List<NoteDto>> GetNotesByCategoryAsync(string category)
     {
         // 將 string 轉成 Enum（如果轉換失敗，回傳空 List）
         if (!Enum.TryParse<NoteCategory>(category, true, out var categoryEnum))
@@ -122,10 +122,86 @@ public class NoteService : INoteService
         ).ToListAsync();
     }
 
-    public List<Note> SearchNotes(string query)
+    public async Task<PaginationDto<NoteDto>> GetNotesPagedAsync(int pageNumber, int pageSize)
     {
-        return _context.Notes
-                       .Where(n => n.Title.Contains(query) || n.Content.Contains(query))
-                       .ToList();
+        var totalCount = await _context.Notes.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+        var notes = await _context.Notes
+            .OrderBy(n => n.Id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(n => new NoteDto
+            {
+                Id = n.Id,
+                Title = n.Title,
+                Content = n.Content,
+                Category = n.Category.ToString(),
+                CreatedAt = n.CreatedAt,
+                UpdatedAt = n.UpdatedAt
+            })
+            .ToListAsync();
+
+        return new PaginationDto<NoteDto>
+        {
+            Items = notes,
+            TotalCount = totalCount,
+            TotalPages = totalPages,
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
     }
+
+    public async Task<PaginationDto<NoteDto>> GetNotesByCategoryPagedAsync(string category, int pageNumber, int pageSize)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
+
+        if (!Enum.TryParse<NoteCategory>(category, true, out var categoryEnum))
+        {
+            return new PaginationDto<NoteDto>
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalCount = 0,
+                TotalPages = 0,
+                Items = new List<NoteDto>()
+            };
+        }
+
+        var query = _context.Notes.Where(n => n.Category == categoryEnum);
+        var totalCount = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+        var notes = await query
+            .OrderByDescending(n => n.CreatedAt)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(n => new NoteDto
+            {
+                Id = n.Id,
+                Title = n.Title,
+                Content = n.Content,
+                Category = n.Category.ToString(),
+                CreatedAt = n.CreatedAt,
+                UpdatedAt = n.UpdatedAt
+            })
+            .ToListAsync();
+
+        return new PaginationDto<NoteDto>
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            TotalPages = totalPages,
+            Items = notes
+        };
+    }
+    public async Task<List<Note>> SearchNotesAsync(string query)
+    {
+        return await _context.Notes
+                       .Where(n => n.Title.Contains(query) || n.Content.Contains(query))
+                       .ToListAsync();
+    }
+
 }

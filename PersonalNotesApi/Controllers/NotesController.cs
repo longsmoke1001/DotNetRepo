@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PersonalNotesApi.DTOs;
 using PersonalNotesApi.Models;
 using PersonalNotesApi.Services;
 //using PersonalNotesApi.Data;
@@ -19,9 +20,9 @@ public class NotesController : ControllerBase
 
     // GET: /api/notes
     [HttpGet]
-    public IActionResult GetAll()
+    public IActionResult GetAll(int pageNumber, int pageSize)
     {
-        var notes = _noteService.GetAllNotesAsync();
+        var notes = _noteService.GetNotesPagedAsync(pageNumber, pageSize);
         return Ok(notes);
     }
 
@@ -38,9 +39,9 @@ public class NotesController : ControllerBase
     }
 
     [HttpGet("category/{category}")] // 新的路由，例如: GET /api/notes/category/日記
-    public IActionResult GetByCategory(NoteCategory category)
+    public IActionResult GetByCategory(string category, int pageNumber, int pageSize)
     {
-        var notes = _noteService.GetNotesByCategoryAsync(category);
+        var notes = _noteService.GetNotesByCategoryPagedAsync(category, pageNumber, pageSize);
         return Ok(notes);
     }
 
@@ -53,7 +54,7 @@ public class NotesController : ControllerBase
 
     // POST: /api/notes
     [HttpPost]
-    public IActionResult Create([FromBody] Note newNote)
+    public IActionResult Create([FromBody] NoteDto newNote)
     {
         if (newNote == null)
         {
@@ -61,7 +62,7 @@ public class NotesController : ControllerBase
         }
 
         newNote.CreatedAt = DateTime.Now;
-        _noteService.CreateNote(newNote);
+        _noteService.CreateNoteAsync(newNote);
 
         return CreatedAtAction(nameof(GetById), new { id = newNote.Id }, newNote);
     }
