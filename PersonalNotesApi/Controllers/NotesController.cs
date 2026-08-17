@@ -21,7 +21,7 @@ public class NotesController : ControllerBase
     [HttpGet]
     public IActionResult GetAll()
     {
-        var notes = _noteService.GetAllNotes();
+        var notes = _noteService.GetAllNotesAsync();
         return Ok(notes);
     }
 
@@ -29,7 +29,7 @@ public class NotesController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult GetById(int id)
     {
-        var note = _noteService.GetNoteById(id);
+        var note = _noteService.GetNoteByIdAsync(id);
         if (note == null)
         {
             return NotFound();
@@ -40,14 +40,14 @@ public class NotesController : ControllerBase
     [HttpGet("category/{category}")] // 新的路由，例如: GET /api/notes/category/日記
     public IActionResult GetByCategory(NoteCategory category)
     {
-        var notes = _noteService.GetNotesByCategory(category);
+        var notes = _noteService.GetNotesByCategoryAsync(category);
         return Ok(notes);
     }
 
     [HttpGet("search")]
     public IActionResult Search(string query)
     {
-        var notes = _noteService.SearchNotes(query);
+        var notes = _noteService.SearchNotesAsync(query);
         return Ok(notes);
     }
 
