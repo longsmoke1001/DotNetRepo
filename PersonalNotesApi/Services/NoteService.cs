@@ -56,4 +56,11 @@ public class NoteService : INoteService
                        .Where(n => n.Category == category)
                        .ToList();
     }
+
+    public List<Note> SearchNotes(string query)
+    {
+        return _context.Notes
+                       .Where(n => n.Title.Contains(query) || n.Content.Contains(query))
+                       .ToList();
+    }
 }

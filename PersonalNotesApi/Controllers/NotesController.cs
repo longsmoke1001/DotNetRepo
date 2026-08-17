@@ -36,11 +36,18 @@ public class NotesController : ControllerBase
     }
 
     [HttpGet("category/{category}")] // 新的路由，例如: GET /api/notes/category/日記
-public IActionResult GetByCategory(NoteCategory category)
-{
-    var notes = _noteService.GetNotesByCategory(category);
-    return Ok(notes);
-}
+    public IActionResult GetByCategory(NoteCategory category)
+    {
+        var notes = _noteService.GetNotesByCategory(category);
+        return Ok(notes);
+    }
+
+    [HttpGet("search")]
+    public IActionResult Search(string query)
+    {
+        var notes = _noteService.SearchNotes(query);
+        return Ok(notes);
+    }
 
     // POST: /api/notes
     [HttpPost]
