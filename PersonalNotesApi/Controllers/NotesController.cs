@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PersonalNotesApi.Models;
 using PersonalNotesApi.Services;
@@ -7,6 +8,7 @@ namespace PersonalNotesApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class NotesController : ControllerBase
 {
     private readonly INoteService _noteService;  // 改用 Service
