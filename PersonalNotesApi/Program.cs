@@ -1,5 +1,5 @@
 using System.Text;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,32 +10,30 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(options =>
 {
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Personal Notes API",
+        Version = "v1"
+    });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
+        Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
         Description = "請輸入 Token（格式：Bearer {your-token}）"
     });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+    // ✅ Swashbuckle 10.x 正確寫法（用 Transformer）
+    options.AddSecurityRequirement(document =>
+        new OpenApiSecurityRequirement
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
+            [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+        });
 });
 builder.Services.AddScoped<INoteService, NoteService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -65,7 +63,6 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.MapControllers();
 app.UseSwagger();
 app.UseSwaggerUI();
