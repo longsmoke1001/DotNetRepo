@@ -53,7 +53,7 @@ public class NoteService : INoteService
         {
             Title = dto.Title,
             Content = dto.Content,
-            Category = Enum.TryParse<NoteCategory>(dto.Category, out var category) ? category : NoteCategory.一般,
+            Category = Enum.TryParse<NoteCategory>(dto.Category, out var category) ? category : NoteCategory.general,
             CreatedAt = DateTime.Now
         };
 
@@ -77,7 +77,7 @@ public class NoteService : INoteService
 
         note.Title = dto.Title;
         note.Content = dto.Content;
-        note.Category = Enum.TryParse<NoteCategory>(dto.Category, out var category) ? category : NoteCategory.一般;
+        note.Category = Enum.TryParse<NoteCategory>(dto.Category, out var category) ? category : NoteCategory.general;
         note.UpdatedAt = DateTime.Now;
 
         await _context.SaveChangesAsync();
