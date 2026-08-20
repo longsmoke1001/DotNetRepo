@@ -9,7 +9,7 @@ namespace PersonalNotesApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-//[Authorize]
+[Authorize]
 public class NotesController : ControllerBase
 {
     private readonly INoteService _noteService;  // 改用 Service
