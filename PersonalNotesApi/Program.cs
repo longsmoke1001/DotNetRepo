@@ -10,6 +10,12 @@ using PersonalNotesApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+// 1. 喺 builder.Services.AddControllers(); 之後加入
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -62,7 +68,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 var app = builder.Build();
-
+// 2. 喺 var app = builder.Build(); 之後，app.UseHttpsRedirection(); 之前加入
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
