@@ -8,12 +8,13 @@ function NotesList({ token }) {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const response = await axios.get('https://localhost:5001/api/notes', {
+        const response = await axios.get('http://localhost:5027/api/Notes', {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
-        setNotes(response.data);
+        console.log('API 回傳:', response.data.items);
+        setNotes(response.data.items || []);
       } catch (err) {
         console.error('Fetch notes error:', err);
         alert('拎唔到 Notes，請確認 Token 有效');
