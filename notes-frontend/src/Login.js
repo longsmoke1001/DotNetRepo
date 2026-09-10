@@ -14,8 +14,8 @@ function Login({ onLoginSuccess }) {
 
     try {
       // ⚠️ 將 5001 改返你做 API 嘅 port
-      const response = await axios.post('https://localhost:5001/api/auth/login', {
-        email,
+      const response = await axios.post('https://localhost:5027/api/auth/login', {
+        username: email,
         password
       });
 
@@ -38,7 +38,7 @@ function Login({ onLoginSuccess }) {
         <div>
           <label>電郵：</label>
           <input
-            type="email"
+            type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
