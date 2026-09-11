@@ -20,17 +20,17 @@ public class NotesController : ControllerBase
 
     // GET: /api/notes
     [HttpGet]
-    public IActionResult GetAll(int pageNumber, int pageSize)
+    public async Task<IActionResult> GetAll(int pageNumber, int pageSize)
     {
-        var notes = _noteService.GetNotesPagedAsync(pageNumber, pageSize);
+        var notes = await _noteService.GetNotesPagedAsync(pageNumber, pageSize);
         return Ok(notes);
     }
 
     // GET: /api/notes/{id}
     [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var note = _noteService.GetNoteByIdAsync(id);
+        var note = await _noteService.GetNoteByIdAsync(id);
         if (note == null)
         {
             return NotFound();
@@ -39,22 +39,22 @@ public class NotesController : ControllerBase
     }
 
     [HttpGet("category/{category}")] // 新的路由，例如: GET /api/notes/category/日記
-    public IActionResult GetByCategory(string category, int pageNumber, int pageSize)
+    public async Task<IActionResult> GetByCategory(string category, int pageNumber, int pageSize)
     {
-        var notes = _noteService.GetNotesByCategoryPagedAsync(category, pageNumber, pageSize);
+        var notes = await _noteService.GetNotesByCategoryPagedAsync(category, pageNumber, pageSize);
         return Ok(notes);
     }
 
     [HttpGet("search")]
-    public IActionResult Search(string query)
+    public async Task<IActionResult> Search(string query)
     {
-        var notes = _noteService.SearchNotesAsync(query);
+        var notes = await _noteService.SearchNotesAsync(query);
         return Ok(notes);
     }
 
     // POST: /api/notes
     [HttpPost]
-    public IActionResult Create([FromBody] NoteDto newNote)
+    public async Task<IActionResult> Create([FromBody] NoteDto newNote)
     {
         if (newNote == null)
         {
@@ -62,7 +62,7 @@ public class NotesController : ControllerBase
         }
 
         newNote.CreatedAt = DateTime.Now;
-        _noteService.CreateNoteAsync(newNote);
+        await _noteService.CreateNoteAsync(newNote);
 
         return CreatedAtAction(nameof(GetById), new { id = newNote.Id }, newNote);
     }

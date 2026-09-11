@@ -12,9 +12,9 @@ function Login({ onLoginSuccess }) {
     setError('');
     setLoading(true);
 
-      // 🔍 DEBUG
-  console.log('傳送嘅 username:', email);
-  console.log('傳送嘅 password:', password);
+    // 🔍 DEBUG
+    console.log('傳送嘅 username:', email);
+    console.log('傳送嘅 password:', password);
     try {
       // ⚠️ 將 5001 改返你做 API 嘅 port
       const response = await axios.post('http://localhost:5027/api/Auth/login', {

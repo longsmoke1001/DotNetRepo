@@ -11,6 +11,10 @@ function NotesList({ token }) {
         const response = await axios.get('http://localhost:5027/api/Notes', {
           headers: {
             Authorization: `Bearer ${token}`
+          },
+          params: {
+            pageNumber: 1,
+            pageSize: 10
           }
         });
         console.log('API 回傳:', response.data.items);
