@@ -27,7 +27,6 @@ function NotesList({ token }) {
         setLoading(false);
       }
     };
-
     fetchNotes();
   }, [token, refreshKey]);   // ← 新增：refreshKey 改變時重新執行
 
@@ -36,6 +35,21 @@ function NotesList({ token }) {
     setRefreshKey(prev => prev + 1);   // 將 refreshKey +1，觸發 useEffect 重新執行
   };
 
+  const handleDelete = async (id) => {
+  if (!window.confirm('確定刪除呢個筆記？')) return;
+
+  try {
+    await axios.delete(`http://localhost:5027/api/Notes/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    setRefreshKey(prev => prev + 1);  // 重新 fetch
+  } catch (err) {
+    console.error('Delete error:', err);
+    alert('刪除失敗');
+  }
+};
   if (loading) return <p>載入中...</p>;
 
   return (
@@ -54,6 +68,12 @@ function NotesList({ token }) {
               <p style={{ margin: '4px 0 0 0', color: '#666', fontSize: 14 }}>
                 {note.content}
               </p>
+              <button
+                onClick={() => handleDelete(note.id)}
+                style={{ marginTop: 5, padding: '4px 10px', color: 'red' }}
+              >
+                刪除
+              </button>
             </li>
           ))}
         </ul>

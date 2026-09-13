@@ -204,4 +204,13 @@ public class NoteService : INoteService
                        .ToListAsync();
     }
 
+    public async Task<bool> DeleteAsync(int id)
+    {
+        var note = await _context.Notes.FindAsync(id);
+        if (note == null) return false;
+
+        _context.Notes.Remove(note);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }
