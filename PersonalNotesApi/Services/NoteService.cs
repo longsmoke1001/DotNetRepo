@@ -213,4 +213,17 @@ public class NoteService : INoteService
         await _context.SaveChangesAsync();
         return true;
     }
+    public async Task<bool> UpdateAsync(int id, NoteDto dto)
+    {
+        var note = await _context.Notes.FindAsync(id);
+        if (note == null) return false;
+
+        note.Title = dto.Title;
+        note.Content = dto.Content;
+        note.Category = Enum.TryParse<NoteCategory>(dto.Category, out var category) ? category : NoteCategory.general;
+        note.UpdatedAt = DateTime.Now;
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }

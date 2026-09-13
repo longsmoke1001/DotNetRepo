@@ -66,11 +66,18 @@ public class NotesController : ControllerBase
 
         return CreatedAtAction(nameof(GetById), new { id = newNote.Id }, newNote);
     }
-    
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         var result = await _noteService.DeleteAsync(id);
+        if (!result) return NotFound();
+        return NoContent();
+    }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] NoteDto dto)
+    {
+        var result = await _noteService.UpdateAsync(id, dto);
         if (!result) return NotFound();
         return NoContent();
     }

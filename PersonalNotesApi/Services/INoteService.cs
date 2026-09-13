@@ -19,4 +19,5 @@ public interface INoteService
     Task<PaginationDto<NoteDto>> GetNotesPagedAsync(int pageNumber, int pageSize);
     Task<PaginationDto<NoteDto>> GetNotesByCategoryPagedAsync(string category, int pageNumber, int pageSize);
     Task<bool> DeleteAsync(int id);  // 新增 DeleteAsync 方法
+    Task<bool> UpdateAsync(int id, NoteDto dto);  // 新增 UpdateAsync 方法
 }
