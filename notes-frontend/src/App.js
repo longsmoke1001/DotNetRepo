@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import Login from './Login';
 import NotesList from './NotesList';
 import './App.css';
@@ -17,16 +18,28 @@ function App() {
 
   return (
     <div className="App">
-      {!token ? (
-        <Login onLoginSuccess={handleLoginSuccess} />
-      ) : (
-        <div>
-          <button onClick={handleLogout} style={{ float: 'right', margin: 10 }}>
-            登出
-          </button>
-          <NotesList token={token} />
-        </div>
+      {token && (
+        <nav style={{ padding: 10, borderBottom: '1px solid #ccc' }}>
+          <Link to="/notes" style={{ marginRight: 15 }}>我的筆記</Link>
+          <button onClick={handleLogout} style={{ float: 'right' }}>登出</button>
+        </nav>
       )}
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            token ? <Navigate to="/notes" /> : <Login onLoginSuccess={handleLoginSuccess} />
+          }
+        />
+        <Route
+          path="/notes"
+          element={
+            token ? <NotesList token={token} /> : <Navigate to="/" />
+          }
+        />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </div>
   );
 }
