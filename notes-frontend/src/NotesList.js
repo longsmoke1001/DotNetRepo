@@ -27,7 +27,7 @@ function NotesList({ token }) {
         setTotalPages(response.data.totalPages || 1);   // ← 儲存總頁數
       } catch (err) {
         console.error('Fetch notes error:', err);
-        alert('拎唔到 Notes，請確認 Token 有效');
+        alert('Unable to load notes. Please check that your token is valid.');
       } finally {
         setLoading(false);
       }
@@ -41,7 +41,7 @@ function NotesList({ token }) {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('確定刪除呢個筆記？')) return;
+    if (!window.confirm('Are you sure you want to delete this note?')) return;
 
     try {
       await axios.delete(`http://localhost:5027/api/Notes/${id}`, {
@@ -52,19 +52,19 @@ function NotesList({ token }) {
       setRefreshKey(prev => prev + 1);  // 重新 fetch
     } catch (err) {
       console.error('Delete error:', err);
-      alert('刪除失敗');
+      alert('Failed to delete the note.');
     }
   };
-  if (loading) return <p>載入中...</p>;
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div>
       {/* ← 新增：AddNote 元件 */}
       <AddNote token={token} onNoteAdded={handleNoteAdded} />
 
-      <h2>我的筆記</h2>
+      <h2>My Notes</h2>
       {notes.length === 0 ? (
-        <p>暫時冇筆記</p>
+        <p>No notes yet.</p>
       ) : (
         <ul>
           {notes.map((note) => (
@@ -89,13 +89,13 @@ function NotesList({ token }) {
                     onClick={() => setEditingId(note.id)}
                     style={{ marginTop: 5, marginRight: 10, padding: '4px 10px' }}
                   >
-                    編輯
+                    Edit
                   </button>
                   <button
                     onClick={() => handleDelete(note.id)}
                     style={{ marginTop: 5, padding: '4px 10px', color: 'red' }}
                   >
-                    刪除
+                    Delete
                   </button>
                 </>
               )}
@@ -109,17 +109,17 @@ function NotesList({ token }) {
           disabled={pageNumber === 1}
           style={{ padding: '8px 16px', marginRight: 10 }}
         >
-          上一頁
+          Previous
         </button>
 
-        <span>第 {pageNumber} / {totalPages} 頁</span>
+        <span>Page {pageNumber} of {totalPages}</span>
 
         <button
           onClick={() => setPageNumber(prev => Math.min(prev + 1, totalPages))}
           disabled={pageNumber === totalPages}
           style={{ padding: '8px 16px', marginLeft: 10 }}
         >
-          下一頁
+          Next
         </button>
       </div>
     </div>

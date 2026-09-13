@@ -20,8 +20,8 @@ function App() {
     <div className="App">
       {token && (
         <nav style={{ padding: 10, borderBottom: '1px solid #ccc' }}>
-          <Link to="/notes" style={{ marginRight: 15 }}>我的筆記</Link>
-          <button onClick={handleLogout} style={{ float: 'right' }}>登出</button>
+          <Link to="/notes" style={{ marginRight: 15 }}>My Notes</Link>
+          <button onClick={handleLogout} style={{ float: 'right' }}>Log Out</button>
         </nav>
       )}
 

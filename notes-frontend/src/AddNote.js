@@ -38,7 +38,7 @@ function AddNote({ token, onNoteAdded }) {
 
     } catch (err) {
       console.error('Add note error:', err);
-      setError('新增失敗，請稍後再試');
+      setError('Failed to add the note. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -46,10 +46,10 @@ function AddNote({ token, onNoteAdded }) {
 
   return (
     <div style={{ marginBottom: 20, padding: 15, border: '1px solid #ccc', borderRadius: 8 }}>
-      <h3>新增筆記</h3>
+      <h3>Add Note</h3>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>標題：</label>
+          <label>Title:</label>
           <input
             type="text"
             value={title}
@@ -59,7 +59,7 @@ function AddNote({ token, onNoteAdded }) {
           />
         </div>
         <div>
-          <label>內容：</label>
+          <label>Content:</label>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
@@ -69,19 +69,19 @@ function AddNote({ token, onNoteAdded }) {
           />
         </div>
         <div>
-          <label>分類：</label>
+          <label>Category:</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             style={{ width: '100%', padding: 8, marginBottom: 10 }}
           >
-            <option value="general">一般</option>
-            <option value="dairy">日記</option>
-            <option value="password">密碼</option>
+            <option value="general">General</option>
+            <option value="dairy">Diary</option>
+            <option value="password">Password</option>
           </select>
         </div>
         <button type="submit" disabled={loading} style={{ padding: '10px 20px' }}>
-          {loading ? '新增中...' : '新增'}
+          {loading ? 'Adding...' : 'Add Note'}
         </button>
         {error && <p style={{ color: 'red', marginTop: 10 }}>{error}</p>}
       </form>

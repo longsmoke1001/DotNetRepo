@@ -27,7 +27,7 @@ function Login({ onLoginSuccess }) {
       onLoginSuccess(token);
 
     } catch (err) {
-      setError('登入失敗，請檢查電郵同密碼');
+      setError('Login failed. Please check your email and password.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -36,10 +36,10 @@ function Login({ onLoginSuccess }) {
 
   return (
     <div style={{ maxWidth: 400, margin: '50px auto', padding: 20, border: '1px solid #ccc', borderRadius: 8 }}>
-      <h2>登入</h2>
+      <h2>Log In</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>電郵：</label>
+          <label>Email:</label>
           <input
             type="text"
             value={email}
@@ -49,7 +49,7 @@ function Login({ onLoginSuccess }) {
           />
         </div>
         <div>
-          <label>密碼：</label>
+          <label>Password:</label>
           <input
             type="password"
             value={password}
@@ -59,7 +59,7 @@ function Login({ onLoginSuccess }) {
           />
         </div>
         <button type="submit" disabled={loading} style={{ padding: '10px 20px' }}>
-          {loading ? '登入中...' : '登入'}
+          {loading ? 'Logging in...' : 'Log In'}
         </button>
         {error && <p style={{ color: 'red', marginTop: 10 }}>{error}</p>}
       </form>
