@@ -9,7 +9,7 @@ namespace PersonalNotesApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-//[Authorize]
+[Authorize]
 public class NotesController : ControllerBase
 {
     private readonly INoteService _noteService;  // 改用 Service
@@ -65,5 +65,13 @@ public class NotesController : ControllerBase
         await _noteService.CreateNoteAsync(newNote);
 
         return CreatedAtAction(nameof(GetById), new { id = newNote.Id }, newNote);
+    }
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var result = await _noteService.DeleteAsync(id);
+        if (!result) return NotFound();
+        return NoContent();
     }
 }

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import AddNote from './AddNote';   // ← 新增：引入 AddNote 元件
 
 function NotesList({ token }) {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);   // ← 新增：用嚟觸發重新 fetch
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -17,7 +19,6 @@ function NotesList({ token }) {
             pageSize: 10
           }
         });
-        console.log('API 回傳:', response.data.items);
         setNotes(response.data.items || []);
       } catch (err) {
         console.error('Fetch notes error:', err);
@@ -28,12 +29,20 @@ function NotesList({ token }) {
     };
 
     fetchNotes();
-  }, [token]);
+  }, [token, refreshKey]);   // ← 新增：refreshKey 改變時重新執行
+
+  // ← 新增：新增成功後嘅 callback
+  const handleNoteAdded = () => {
+    setRefreshKey(prev => prev + 1);   // 將 refreshKey +1，觸發 useEffect 重新執行
+  };
 
   if (loading) return <p>載入中...</p>;
 
   return (
     <div>
+      {/* ← 新增：AddNote 元件 */}
+      <AddNote token={token} onNoteAdded={handleNoteAdded} />
+
       <h2>我的筆記</h2>
       {notes.length === 0 ? (
         <p>暫時冇筆記</p>
