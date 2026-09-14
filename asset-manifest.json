@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/DotNetRepo/static/css/main.6bd45252.css",
-    "main.js": "/DotNetRepo/static/js/main.90c3ba7c.js",
+    "main.js": "/DotNetRepo/static/js/main.b2847fba.js",
     "index.html": "/DotNetRepo/index.html",
     "main.6bd45252.css.map": "/DotNetRepo/static/css/main.6bd45252.css.map",
-    "main.90c3ba7c.js.map": "/DotNetRepo/static/js/main.90c3ba7c.js.map"
+    "main.b2847fba.js.map": "/DotNetRepo/static/js/main.b2847fba.js.map"
   },
   "entrypoints": [
     "static/css/main.6bd45252.css",
-    "static/js/main.90c3ba7c.js"
+    "static/js/main.b2847fba.js"
   ]
 }
