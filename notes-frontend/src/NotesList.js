@@ -14,7 +14,7 @@ function NotesList({ token }) {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const response = await axios.get('http://localhost:5027/api/Notes', {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/Notes`, {
           headers: {
             Authorization: `Bearer ${token}`
           },
@@ -44,7 +44,7 @@ function NotesList({ token }) {
     if (!window.confirm('Are you sure you want to delete this note?')) return;
 
     try {
-      await axios.delete(`http://localhost:5027/api/Notes/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/Notes/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

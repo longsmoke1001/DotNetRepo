@@ -15,7 +15,7 @@ function AddNote({ token, onNoteAdded }) {
 
     try {
       await axios.post(
-        'http://localhost:5027/api/Notes',
+        `${process.env.REACT_APP_API_URL}/api/Notes`,
         {
           title,
           content,

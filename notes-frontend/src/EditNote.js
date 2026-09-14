@@ -15,7 +15,7 @@ function EditNote({ token, note, onNoteUpdated, onCancel }) {
 
     try {
       await axios.put(
-        `http://localhost:5027/api/Notes/${note.id}`,
+        `${process.env.REACT_APP_API_URL}/api/Notes/${note.id}`,
         {
           title,
           content,

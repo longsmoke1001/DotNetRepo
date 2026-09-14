@@ -17,7 +17,8 @@ function Login({ onLoginSuccess }) {
     console.log('傳送嘅 password:', password);
     try {
       // ⚠️ 將 5001 改返你做 API 嘅 port
-      const response = await axios.post('http://localhost:5027/api/Auth/login', {
+      console.log('API URL:', process.env.REACT_APP_API_URL);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/Auth/login`, {
         username: email,
         password
       });
