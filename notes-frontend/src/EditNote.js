@@ -38,52 +38,62 @@ function EditNote({ token, note, onNoteUpdated, onCancel }) {
     }
   };
 
-  return (
-    <div style={{ marginTop: 10, padding: 15, border: '1px solid #007bff', borderRadius: 8 }}>
-      <h3>Edit Note</h3>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Title:</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            style={{ width: '100%', padding: 8, marginBottom: 10 }}
-          />
-        </div>
-        <div>
-          <label>Content:</label>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            required
-            rows={3}
-            style={{ width: '100%', padding: 8, marginBottom: 10 }}
-          />
-        </div>
-        <div>
-          <label>Category:</label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            style={{ width: '100%', padding: 8, marginBottom: 10 }}
-          >
-            <option value="general">General</option>
-            <option value="dairy">Diary</option>
-            <option value="password">Password</option>
-          </select>
-        </div>
-        <button type="submit" disabled={loading} style={{ padding: '8px 16px', marginRight: 10 }}>
-          {loading ? 'Updating...' : 'Update'}
+return (
+  <div>
+    <h3 className="text-lg font-bold mb-4">編輯筆記</h3>
+    <form onSubmit={handleSubmit}>
+      <div className="mb-4">
+        <label className="block mb-2 font-medium">標題：</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block mb-2 font-medium">內容：</label>
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          required
+          rows={3}
+          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block mb-2 font-medium">分類：</label>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+        >
+          <option value="general">一般</option>
+          <option value="dairy">日記</option>
+          <option value="password">密碼</option>
+        </select>
+      </div>
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition disabled:opacity-50"
+        >
+          {loading ? '更新中...' : '更新'}
         </button>
-        <button type="button" onClick={onCancel} style={{ padding: '8px 16px' }}>
-          Cancel
+        <button
+          type="button"
+          onClick={onCancel}
+          className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded transition"
+        >
+          取消
         </button>
-        {error && <p style={{ color: 'red', marginTop: 10 }}>{error}</p>}
-      </form>
-    </div>
-  );
+      </div>
+      {error && <p className="text-red-500 mt-3 text-sm">{error}</p>}
+    </form>
+  </div>
+);
 }
 
 export default EditNote;

@@ -55,20 +55,21 @@ function NotesList({ token }) {
       alert('Failed to delete the note.');
     }
   };
-  if (loading) return <p>Loading...</p>;
+
+  if (loading) return <p className="text-center py-10 text-gray-500">載入中...</p>;
 
   return (
-    <div>
-      {/* ← 新增：AddNote 元件 */}
+    <div className="max-w-3xl mx-auto">
       <AddNote token={token} onNoteAdded={handleNoteAdded} />
 
-      <h2>My Notes</h2>
+      <h2 className="text-2xl font-bold mb-4">我的筆記</h2>
+
       {notes.length === 0 ? (
-        <p>No notes yet.</p>
+        <p className="text-gray-500">暫時冇筆記</p>
       ) : (
-        <ul>
+        <ul className="space-y-4">
           {notes.map((note) => (
-            <li key={note.id} style={{ padding: '8px 0', borderBottom: '1px solid #eee' }}>
+            <li key={note.id} className="bg-white p-5 rounded-lg shadow-sm">
               {editingId === note.id ? (
                 <EditNote
                   token={token}
@@ -81,45 +82,52 @@ function NotesList({ token }) {
                 />
               ) : (
                 <>
-                  <strong>{note.title}</strong>
-                  <p style={{ margin: '4px 0 0 0', color: '#666', fontSize: 14 }}>
-                    {note.content}
-                  </p>
-                  <button
-                    onClick={() => setEditingId(note.id)}
-                    style={{ marginTop: 5, marginRight: 10, padding: '4px 10px' }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(note.id)}
-                    style={{ marginTop: 5, padding: '4px 10px', color: 'red' }}
-                  >
-                    Delete
-                  </button>
+                  <h3 className="text-lg font-semibold text-slate-800 mb-2">{note.title}</h3>
+                  <p className="text-gray-600 mb-4">{note.content}</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setEditingId(note.id)}
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded text-sm transition"
+                    >
+                      編輯
+                    </button>
+                    <button
+                      onClick={() => handleDelete(note.id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded text-sm transition"
+                    >
+                      刪除
+                    </button>
+                  </div>
                 </>
               )}
             </li>
           ))}
         </ul>
       )}
-      <div style={{ marginTop: 20, textAlign: 'center' }}>
+
+      <div className="flex justify-center items-center gap-4 mt-8">
         <button
-          onClick={() => setPageNumber(prev => Math.max(prev - 1, 1))}
+          onClick={() => {
+            setPageNumber(prev => Math.max(prev - 1, 1));
+            setRefreshKey(prev => prev + 1);
+          }}
           disabled={pageNumber === 1}
-          style={{ padding: '8px 16px', marginRight: 10 }}
+          className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded transition disabled:opacity-50"
         >
-          Previous
+          上一頁
         </button>
 
-        <span>Page {pageNumber} of {totalPages}</span>
+        <span className="text-gray-700">第 {pageNumber} / {totalPages} 頁</span>
 
         <button
-          onClick={() => setPageNumber(prev => Math.min(prev + 1, totalPages))}
+          onClick={() => {
+            setPageNumber(prev => Math.min(prev + 1, totalPages));
+            setRefreshKey(prev => prev + 1);
+          }}
           disabled={pageNumber === totalPages}
-          style={{ padding: '8px 16px', marginLeft: 10 }}
+          className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded transition disabled:opacity-50"
         >
-          Next
+          下一頁
         </button>
       </div>
     </div>

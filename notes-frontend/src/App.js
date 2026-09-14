@@ -17,29 +17,38 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="min-h-screen bg-gray-100">
       {token && (
-        <nav style={{ padding: 10, borderBottom: '1px solid #ccc' }}>
-          <Link to="/notes" style={{ marginRight: 15 }}>My Notes</Link>
-          <button onClick={handleLogout} style={{ float: 'right' }}>Log Out</button>
+        <nav className="bg-slate-800 text-white px-6 py-4 flex justify-between items-center shadow-md">
+          <Link to="/notes" className="font-semibold hover:underline">
+            我的筆記
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded transition"
+          >
+            登出
+          </button>
         </nav>
       )}
 
-      <Routes>
-        <Route
-          path="/"
-          element={
-            token ? <Navigate to="/notes" /> : <Login onLoginSuccess={handleLoginSuccess} />
-          }
-        />
-        <Route
-          path="/notes"
-          element={
-            token ? <NotesList token={token} /> : <Navigate to="/" />
-          }
-        />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+      <div className="container mx-auto p-6">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              token ? <Navigate to="/notes" /> : <Login onLoginSuccess={handleLoginSuccess} />
+            }
+          />
+          <Route
+            path="/notes"
+            element={
+              token ? <NotesList token={token} /> : <Navigate to="/" />
+            }
+          />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </div>
     </div>
   );
 }

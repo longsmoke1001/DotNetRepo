@@ -35,33 +35,37 @@ function Login({ onLoginSuccess }) {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '50px auto', padding: 20, border: '1px solid #ccc', borderRadius: 8 }}>
-      <h2>Log In</h2>
+    <div className="max-w-md mx-auto mt-20 bg-white p-8 rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold text-center mb-6">登入</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
+        <div className="mb-4">
+          <label className="block mb-2 font-medium">電郵：</label>
           <input
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{ width: '100%', padding: 8, marginBottom: 10 }}
+            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
           />
         </div>
-        <div>
-          <label>Password:</label>
+        <div className="mb-4">
+          <label className="block mb-2 font-medium">密碼：</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ width: '100%', padding: 8, marginBottom: 10 }}
+            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
           />
         </div>
-        <button type="submit" disabled={loading} style={{ padding: '10px 20px' }}>
-          {loading ? 'Logging in...' : 'Log In'}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition disabled:opacity-50"
+        >
+          {loading ? '登入中...' : '登入'}
         </button>
-        {error && <p style={{ color: 'red', marginTop: 10 }}>{error}</p>}
+        {error && <p className="text-red-500 mt-3 text-sm">{error}</p>}
       </form>
     </div>
   );
