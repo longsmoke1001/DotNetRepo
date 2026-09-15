@@ -17,6 +17,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./notes-nextjs   # ← 加呢行
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,6 +28,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
+          cache-dependency-path: notes-nextjs/package-lock.json   # ← 加呢行
 
       - name: Install dependencies
         run: npm ci
@@ -35,7 +40,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: ./notes-nextjs/out   # ← 加 notes-nextjs
 
   deploy:
     needs: build
