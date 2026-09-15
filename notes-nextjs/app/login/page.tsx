@@ -38,7 +38,7 @@ export default function LoginPage() {
 
   return (
     <div className="max-w-md mx-auto mt-20 bg-white p-8 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-6">登入</h2>
+      <h2 className="text-2xl font-bold text-center text-gray-900 mb-6">登入</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block mb-2 font-medium text-gray-900">電郵：</label>
