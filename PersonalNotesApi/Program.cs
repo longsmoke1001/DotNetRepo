@@ -8,8 +8,16 @@ using PersonalNotesApi.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5027";
-builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+var port = Environment.GetEnvironmentVariable("PORT") 
+    ?? Environment.GetEnvironmentVariable("ASPNETCORE_URLS") 
+    ?? "http://0.0.0.0:5027";
+
+if (!port.StartsWith("http"))
+{
+    port = $"http://0.0.0.0:{port}";
+}
+
+builder.WebHost.UseUrls(port);
 // Configure services and cross-origin requests.
 builder.Services.AddCors(options =>
 {
