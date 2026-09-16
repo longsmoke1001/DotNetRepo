@@ -1,54 +1,41 @@
-name: Deploy Next.js site to Pages
+name: Build and deploy ASP.Net Core app to Azure Web App
 
 on:
   push:
-    branches: ["main"]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+    branches:
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./notes-nextjs   # ← 加呢行
+    runs-on: windows-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
         with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: notes-nextjs/package-lock.json   # ← 加呢行
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build with Next.js
-        run: npx next build
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+          dotnet-version: '8.x'
+      - run: dotnet build --configuration Release
+        working-directory: ./PersonalNotesAPI
+      - run: dotnet publish -c Release -o ./publish
+        working-directory: ./PersonalNotesAPI
+      - uses: actions/upload-artifact@v4
         with:
-          path: ./notes-nextjs/out   # ← 加 notes-nextjs
+          name: .net-app
+          path: ./PersonalNotesAPI/publish
 
   deploy:
+    runs-on: windows-latest
     needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+          path: ./myapp
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_... }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_... }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_... }}
+      - uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'personal-notes-api'
+          package: ./myapp
