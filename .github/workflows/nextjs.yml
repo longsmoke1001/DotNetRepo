@@ -23,7 +23,7 @@ jobs:
         working-directory: ./PersonalNotesAPI    # ← 加呢行
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o ./publish
         working-directory: ./PersonalNotesAPI    # ← 加呢行
 
       - name: Upload artifact for deployment job
