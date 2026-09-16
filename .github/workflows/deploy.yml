@@ -1,23 +1,35 @@
-name: Build and deploy ASP.Net Core app to Azure Web App
+name: Build and deploy ASP.Net Core app to Azure Web App - personal-notes-api
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: read
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
-      - run: dotnet build --configuration Release
+
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
         working-directory: ./PersonalNotesAPI
-      - run: dotnet publish -c Release -o ./publish
+
+      - name: dotnet publish
+        run: dotnet publish -c Release -o ./publish
         working-directory: ./PersonalNotesAPI
-      - uses: actions/upload-artifact@v4
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
         with:
           name: .net-app
           path: ./PersonalNotesAPI/publish
@@ -25,17 +37,28 @@ jobs:
   deploy:
     runs-on: windows-latest
     needs: build
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
         with:
           name: .net-app
           path: ./myapp
-      - uses: azure/login@v2
+      
+      - name: Login to Azure
+        uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_... }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_... }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_... }}
-      - uses: azure/webapps-deploy@v3
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1E4C38A97751474488AACBFD3CCE1E1C }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_59D9BE383AEA43B78DAD5437517F85C8 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B085C22B81C84862B3BA7711F3EFB13E }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
         with:
           app-name: 'personal-notes-api'
+          slot-name: 'Production'
           package: ./myapp
