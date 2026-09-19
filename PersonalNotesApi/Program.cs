@@ -68,8 +68,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "PersonalNotesApi",
             ValidAudience = builder.Configuration["Jwt:Audience"] ?? "PersonalNotesApiUsers",
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]
-                    ?? "your-super-secret-key-at-least-32-chars-long"))
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!
+            ))//?? "your-super-secret-key-at-least-32-chars-long"))
         };
     });
 
