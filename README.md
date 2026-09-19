@@ -1,53 +1,136 @@
-# Personal Notes API
+# Personal Notes App
 
-A RESTful API built with ASP.NET Core for managing personal notes, diaries, and password records.
+A full-stack personal notes application with .NET Core API and React frontend.
 
-## Tech Stack
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
+![.NET](https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet)
 
-- ASP.NET Core 10
-- Entity Framework Core 10
+## 🌐 Live Demo
+
+| Version | URL |
+|---------|-----|
+| **React** | [https://longsmoke1001.github.io/DotNetRepo/](https://longsmoke1001.github.io/DotNetRepo/) |
+| **API (Swagger)** | [https://personal-notes-api-eeh2exdphmcccaat.germanywestcentral-01.azurewebsites.net/swagger](https://personal-notes-api-eeh2exdphmcccaat.germanywestcentral-01.azurewebsites.net/swagger) |
+
+**Login**: `admin` / `password`
+
+## ✨ Features
+
+- 🔐 JWT Authentication (Login / Logout)
+- 📝 Notes CRUD (Create / Read / Update / Delete)
+- 📄 Pagination
+- 🏷️ Categories (General / Diary / Password)
+- 📱 Responsive Design (Tailwind CSS)
+
+## 🛠️ Tech Stack
+
+### Backend
+- C# / .NET 8
+- ASP.NET Core Web API
+- Entity Framework Core
 - SQLite
 - JWT Authentication
-- Swagger / OpenAPI
+- Swagger
 
-## Features
+### Frontend
+- React 19
+- React Router
+- Tailwind CSS
+- Axios
 
-- CRUD operations for notes
-- Categorization (General / Diary / Password)
-- Search by title or content
-- Pagination support
-- JWT Authentication
-- Swagger API documentation
+### Deployment
+- **.NET API**: Azure App Service
+- **React**: GitHub Pages (`gh-pages`)
 
-## Getting Started
+## 📁 Project Structure
+
+```
+DotNetRepo/
+  ├── PersonalNotesAPI/       ← .NET Core API
+  │     ├── Controllers/
+  │     ├── Services/
+  │     ├── Models/
+  │     └── Program.cs
+  ├── notes-frontend/         ← React App
+  │     ├── src/
+  │     └── package.json
+  └── .github/workflows/
+        └── deploy.yml        ← Deploy .NET API
+```
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- .NET 10 SDK
-- SQLite (built-in)
+- .NET 8 SDK
+- Node.js 20+
+- Git
 
-### Installation
+### 1. Clone the repository
 
-1. Clone the repository
-   ```bash
-   git clone https://github.com/your-username/personal-notes-api.git
-   cd personal-notes-api
-## API Endpoints
+```bash
+git clone https://github.com/longsmoke1001/DotNetRepo.git
+cd DotNetRepo
+```
 
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| GET | `/api/notes` | Get all notes (paginated) |
-| GET | `/api/notes/{id}` | Get a specific note |
-| POST | `/api/notes` | Create a new note |
-| PUT | `/api/notes/{id}` | Update a note |
-| DELETE | `/api/notes/{id}` | Delete a note |
-| GET | `/api/notes/search?query={keyword}` | Search notes |
-| GET | `/api/notes/category/{category}` | Filter by category |
-| POST | `/api/auth/login` | Login to get JWT token |
+### 2. Start the backend
 
-## Default Test User
+```bash
+cd PersonalNotesAPI
+dotnet run
+```
 
-For testing purposes, you can use the following credentials:
+API runs at `http://localhost:8080`.
 
-- Username: `admin`
-- Password: `password`
+### 3. Start the frontend
+
+```bash
+cd notes-frontend
+npm install
+npm start
+```
+
+React app runs at `http://localhost:3000`.
+
+## 📡 API Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `POST` | `/api/Auth/login` | Login | ❌ |
+| `GET` | `/api/Notes` | Get notes (paginated) | ✅ |
+| `POST` | `/api/Notes` | Create note | ✅ |
+| `PUT` | `/api/Notes/{id}` | Update note | ✅ |
+| `DELETE` | `/api/Notes/{id}` | Delete note | ✅ |
+
+## 🔑 Environment Variables
+
+### React (`notes-frontend/.env`)
+
+```
+REACT_APP_API_URL=https://personal-notes-api-eeh2exdphmcccaat.germanywestcentral-01.azurewebsites.net
+```
+
+## 🚢 Deployment
+
+### .NET API
+
+```bash
+git push
+# GitHub Actions auto-deploys to Azure
+```
+
+### React
+
+```bash
+cd notes-frontend
+npm run deploy
+```
+
+## 📝 License
+
+MIT License
+
+## 👤 Author
+
+**Huang Long Yin, Leo**
+- GitHub: [@longsmoke1001](https://github.com/longsmoke1001)
