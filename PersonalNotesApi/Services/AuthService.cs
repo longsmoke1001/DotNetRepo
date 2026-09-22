@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PersonalNotesApi.Models;
 
@@ -9,10 +10,12 @@ namespace PersonalNotesApi.Services;
 public class AuthService : IAuthService
 {
     private readonly IConfiguration _configuration;
+    private readonly AppDbContext _context;
 
-    public AuthService(IConfiguration configuration)
+    public AuthService(IConfiguration configuration, AppDbContext context)
     {
         _configuration = configuration;
+        _context = context;
     }
 
     // 示範用 Hardcode 用戶，真實應用會查 Database
@@ -21,7 +24,12 @@ public class AuthService : IAuthService
         // 示範：只係 hardcode 一個用戶
         if (username == "admin" && password == "password")
         {
-            return new User { Id = 1, Username = "admin" };
+            return new User { Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("password") };
+        }
+        var user = _context.Users.FirstOrDefault(u => u.Username == username);
+        if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+        {
+            return user;
         }
         return null;
     }
@@ -48,5 +56,19 @@ public class AuthService : IAuthService
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public async Task<User?> Register(string username, string password)
+    {
+        if (await _context.Users.AnyAsync(u => u.Username == username))
+        {
+            return null;
+        }
+        // 真實應用會將用戶資料存入 Database
+        // 這裡示範直接返回一個新用戶
+        var user = new User { Username = username, PasswordHash = BCrypt.Net.BCrypt.HashPassword(password) };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+        return user;
     }
 }

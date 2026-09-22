@@ -6,4 +6,5 @@ public interface IAuthService
 {
     User? Authenticate(string username, string password);
     string GenerateToken(User user);
+    Task<User?> Register(string username, string password);
 }
