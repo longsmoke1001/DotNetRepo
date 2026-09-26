@@ -3,7 +3,7 @@ using Microsoft.VisualBasic;
 using PersonalNotesApi.Controllers;
 using PersonalNotesApi.DTOs;
 using PersonalNotesApi.Models;
-
+using PersonalNotesApi.Data;
 namespace PersonalNotesApi.Services;
 
 public class NoteService : INoteService

@@ -4,7 +4,8 @@ namespace PersonalNotesApi.Services;
 
 public interface IAuthService
 {
-    User? Authenticate(string username, string password);
+    Task<User?> AuthenticateAsync(string username, string password);
     string GenerateToken(User user);
-    Task<User?> Register(string username, string password);
+    Task<User?> RegisterAsync(string username, string password);
+    Task<bool> ChangePasswordAsync(int userId, string oldPassword, string newPassword);
 }

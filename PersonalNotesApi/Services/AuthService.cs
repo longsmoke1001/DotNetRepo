@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PersonalNotesApi.Models;
+using PersonalNotesApi.Data;
 
 namespace PersonalNotesApi.Services;
 
@@ -19,14 +20,14 @@ public class AuthService : IAuthService
     }
 
     // 示範用 Hardcode 用戶，真實應用會查 Database
-    public User? Authenticate(string username, string password)
+    public async Task<User?> AuthenticateAsync(string username, string password)
     {
         // 示範：只係 hardcode 一個用戶
         if (username == "admin" && password == "password")
         {
             return new User { Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("password") };
         }
-        var user = _context.Users.FirstOrDefault(u => u.Username == username);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
         {
             return user;
@@ -58,7 +59,7 @@ public class AuthService : IAuthService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public async Task<User?> Register(string username, string password)
+    public async Task<User?> RegisterAsync(string username, string password)
     {
         if (await _context.Users.AnyAsync(u => u.Username == username))
         {
@@ -70,5 +71,18 @@ public class AuthService : IAuthService
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
         return user;
+    }
+
+    public async Task<bool> ChangePasswordAsync(int userId, string oldPassword, string newPassword)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null || !BCrypt.Net.BCrypt.Verify(oldPassword, user.PasswordHash))
+        {
+            return false;
+        }
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        await _context.SaveChangesAsync();
+        return true;
     }
 }
