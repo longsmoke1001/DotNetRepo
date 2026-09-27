@@ -40,10 +40,10 @@ function EditNote({ token, note, onNoteUpdated, onCancel }) {
 
 return (
   <div>
-    <h3 className="text-lg font-bold mb-4">編輯筆記</h3>
+    <h3 className="text-lg font-bold mb-4">Edit Note</h3>
     <form onSubmit={handleSubmit}>
       <div className="mb-4">
-        <label className="block mb-2 font-medium">標題：</label>
+        <label className="block mb-2 font-medium">Title:</label>
         <input
           type="text"
           value={title}
@@ -53,7 +53,7 @@ return (
         />
       </div>
       <div className="mb-4">
-        <label className="block mb-2 font-medium">內容：</label>
+        <label className="block mb-2 font-medium">Content:</label>
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -63,15 +63,15 @@ return (
         />
       </div>
       <div className="mb-4">
-        <label className="block mb-2 font-medium">分類：</label>
+        <label className="block mb-2 font-medium">Category:</label>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
         >
-          <option value="general">一般</option>
-          <option value="dairy">日記</option>
-          <option value="password">密碼</option>
+          <option value="general">General</option>
+          <option value="dairy">Diary</option>
+          <option value="password">Password</option>
         </select>
       </div>
       <div className="flex gap-2">
@@ -80,14 +80,14 @@ return (
           disabled={loading}
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition disabled:opacity-50"
         >
-          {loading ? '更新中...' : '更新'}
+          {loading ? 'Updating...' : 'Update'}
         </button>
         <button
           type="button"
           onClick={onCancel}
           className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded transition"
         >
-          取消
+          Cancel
         </button>
       </div>
       {error && <p className="text-red-500 mt-3 text-sm">{error}</p>}

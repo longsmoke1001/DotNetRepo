@@ -13,10 +13,10 @@ function Login({ onLoginSuccess }) {
     setLoading(true);
 
     // 🔍 DEBUG
-    console.log('傳送嘅 username:', email);
-    console.log('傳送嘅 password:', password);
+    console.log('Sending username:', email);
+    console.log('Sending password:', password);
     try {
-      // ⚠️ 將 5001 改返你做 API 嘅 port
+      // ⚠️ Change 5001 back to the port your API runs on
       console.log('API URL:', process.env.REACT_APP_API_URL);
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/Auth/login`, {
         username: email,
@@ -37,10 +37,10 @@ function Login({ onLoginSuccess }) {
 
   return (
     <div className="max-w-md mx-auto mt-20 bg-white p-8 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-6">登入</h2>
+      <h2 className="text-2xl font-bold text-center mb-6">Log In</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block mb-2 font-medium">電郵：</label>
+          <label className="block mb-2 font-medium">Email:</label>
           <input
             type="text"
             value={email}
@@ -50,7 +50,7 @@ function Login({ onLoginSuccess }) {
           />
         </div>
         <div className="mb-4">
-          <label className="block mb-2 font-medium">密碼：</label>
+          <label className="block mb-2 font-medium">Password:</label>
           <input
             type="password"
             value={password}
@@ -64,7 +64,7 @@ function Login({ onLoginSuccess }) {
           disabled={loading}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition disabled:opacity-50"
         >
-          {loading ? '登入中...' : '登入'}
+          {loading ? 'Logging in...' : 'Log In'}
         </button>
         {error && <p className="text-red-500 mt-3 text-sm">{error}</p>}
       </form>

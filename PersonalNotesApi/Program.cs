@@ -93,28 +93,28 @@ using (var scope = app.Services.CreateScope())
 
     if (!db.Notes.Any())
     {
-        Console.WriteLine("✅ 正在加入 100 筆測試數據...");
+        Console.WriteLine("✅ Seeding 100 test notes...");
 
-        var categories = new[] { "一般", "日記", "密碼" };
+        var categories = new[] { "General", "Diary", "Password" };
         var random = new Random();
 
         for (int i = 0; i < 100; i++)
         {
             var note = new Note
             {
-                Title = $"測試備忘錄 {i + 1}",
-                Content = $"呢個係第 {i + 1} 個測試備忘錄嘅內容。",
+                Title = $"Test Note {i + 1}",
+                Content = $"This is the content of test note number {i + 1}.",
                 Category = (NoteCategory)random.Next(0, 3),
                 CreatedAt = DateTime.Now.AddDays(-random.Next(0, 30))
             };
             db.Notes.Add(note);
         }
         db.SaveChanges();
-        Console.WriteLine("✅ 成功加入 100 筆測試數據！");
+        Console.WriteLine("✅ Successfully seeded 100 test notes!");
     }
     else
     {
-        Console.WriteLine($"ℹ️ Database 已有數據，跳過 Seed。現有數據量：{db.Notes.Count()}");
+        Console.WriteLine($"ℹ️ Database already has data, skipping seed. Existing note count: {db.Notes.Count()}");
     }
 }
 app.Run();

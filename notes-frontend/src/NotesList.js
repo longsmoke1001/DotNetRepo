@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import AddNote from './AddNote';   // ← 新增：引入 AddNote 元件
+import AddNote from './AddNote';   // ← NEW: import the AddNote component
 import EditNote from './EditNote';
 
 function NotesList({ token }) {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [refreshKey, setRefreshKey] = useState(0);   // ← 新增：用嚟觸發重新 fetch
+  const [refreshKey, setRefreshKey] = useState(0);   // ← NEW: used to trigger a refetch
   const [pageNumber, setPageNumber] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [editingId, setEditingId] = useState(null);   // 記住邊個 Note 正在編輯
+  const [editingId, setEditingId] = useState(null);   // Remember which note is being edited
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -24,7 +24,7 @@ function NotesList({ token }) {
           }
         });
         setNotes(response.data.items || []);
-        setTotalPages(response.data.totalPages || 1);   // ← 儲存總頁數
+        setTotalPages(response.data.totalPages || 1);   // ← Store the total page count
       } catch (err) {
         console.error('Fetch notes error:', err);
         alert('Unable to load notes. Please check that your token is valid.');
@@ -33,11 +33,11 @@ function NotesList({ token }) {
       }
     };
     fetchNotes();
-  }, [token, refreshKey, pageNumber]);   // ← 新增：refreshKey 改變時重新執行
+  }, [token, refreshKey, pageNumber]);   // ← NEW: re-run when refreshKey changes
 
-  // ← 新增：新增成功後嘅 callback
+  // ← NEW: callback after a note is added successfully
   const handleNoteAdded = () => {
-    setRefreshKey(prev => prev + 1);   // 將 refreshKey +1，觸發 useEffect 重新執行
+    setRefreshKey(prev => prev + 1);   // Increment refreshKey to re-run the useEffect
   };
 
   const handleDelete = async (id) => {
@@ -49,23 +49,23 @@ function NotesList({ token }) {
           Authorization: `Bearer ${token}`
         }
       });
-      setRefreshKey(prev => prev + 1);  // 重新 fetch
+      setRefreshKey(prev => prev + 1);  // Refetch
     } catch (err) {
       console.error('Delete error:', err);
       alert('Failed to delete the note.');
     }
   };
 
-  if (loading) return <p className="text-center py-10 text-gray-500">載入中...</p>;
+  if (loading) return <p className="text-center py-10 text-gray-500">Loading...</p>;
 
   return (
     <div className="max-w-3xl mx-auto">
       <AddNote token={token} onNoteAdded={handleNoteAdded} />
 
-      <h2 className="text-2xl font-bold mb-4">我的筆記</h2>
+      <h2 className="text-2xl font-bold mb-4">My Notes</h2>
 
       {notes.length === 0 ? (
-        <p className="text-gray-500">暫時冇筆記</p>
+        <p className="text-gray-500">No notes yet</p>
       ) : (
         <ul className="space-y-4">
           {notes.map((note) => (
@@ -89,13 +89,13 @@ function NotesList({ token }) {
                       onClick={() => setEditingId(note.id)}
                       className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded text-sm transition"
                     >
-                      編輯
+                      Edit
                     </button>
                     <button
                       onClick={() => handleDelete(note.id)}
                       className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded text-sm transition"
                     >
-                      刪除
+                      Delete
                     </button>
                   </div>
                 </>
@@ -114,10 +114,10 @@ function NotesList({ token }) {
           disabled={pageNumber === 1}
           className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded transition disabled:opacity-50"
         >
-          上一頁
+          Previous
         </button>
 
-        <span className="text-gray-700">第 {pageNumber} / {totalPages} 頁</span>
+        <span className="text-gray-700">Page {pageNumber} of {totalPages}</span>
 
         <button
           onClick={() => {
@@ -127,7 +127,7 @@ function NotesList({ token }) {
           disabled={pageNumber === totalPages}
           className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded transition disabled:opacity-50"
         >
-          下一頁
+          Next
         </button>
       </div>
     </div>
