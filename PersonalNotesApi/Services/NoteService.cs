@@ -1,6 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
-using PersonalNotesApi.Controllers;
 using PersonalNotesApi.DTOs;
 using PersonalNotesApi.Models;
 using PersonalNotesApi.Data;
@@ -15,9 +13,10 @@ public class NoteService : INoteService
         _context = context;
     }
 
-    public async Task<List<NoteDto>> GetAllNotesAsync()
+    public async Task<List<NoteDto>> GetAllNotesAsync(int userId)
     {
         var notes = await _context.Notes
+            .Where(n => n.UserId == userId)  // 只取屬於該用戶嘅筆記
             .Select(n => new NoteDto
             {
                 Id = n.Id,
@@ -27,13 +26,15 @@ public class NoteService : INoteService
                 CreatedAt = n.CreatedAt,
                 UpdatedAt = n.UpdatedAt
             })
-            .ToListAsync<NoteDto>();  // ✅ 明確指定類型
+            .ToListAsync();
 
         return notes;
     }
-    public async Task<NoteDto?> GetNoteByIdAsync(int id)
+
+    public async Task<NoteDto?> GetNoteByIdAsync(int id, int userId)
     {
-        var note = await _context.Notes.FindAsync(id);
+        var note = await _context.Notes
+            .FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
         if (note == null) return null;
 
         return new NoteDto
@@ -47,10 +48,11 @@ public class NoteService : INoteService
         };
     }
 
-    public async Task<NoteDto> CreateNoteAsync(NoteDto dto)
+    public async Task<NoteDto> CreateNoteAsync(NoteDto dto, int userId)
     {
         var note = new Note
         {
+            UserId = userId,  // 設定 UserId
             Title = dto.Title,
             Content = dto.Content,
             Category = Enum.TryParse<NoteCategory>(dto.Category, out var category) ? category : NoteCategory.general,
@@ -70,9 +72,10 @@ public class NoteService : INoteService
         };
     }
 
-    public async Task<NoteDto?> UpdateNoteAsync(int id, NoteDto dto)
+    public async Task<NoteDto?> UpdateNoteAsync(int id, NoteDto dto, int userId)
     {
-        var note = await _context.Notes.FindAsync(id);
+        var note = await _context.Notes
+            .FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
         if (note == null) return null;
 
         note.Title = dto.Title;
@@ -92,9 +95,10 @@ public class NoteService : INoteService
         };
     }
 
-    public async Task<bool> DeleteNoteAsync(int id)
+    public async Task<bool> DeleteNoteAsync(int id, int userId)
     {
-        var note = await _context.Notes.FindAsync(id);
+        var note = await _context.Notes
+            .FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
         if (note == null) return false;
 
         _context.Notes.Remove(note);
@@ -102,32 +106,38 @@ public class NoteService : INoteService
         return true;
     }
 
-    public async Task<List<NoteDto>> GetNotesByCategoryAsync(string category)
+    public async Task<List<NoteDto>> GetNotesByCategoryAsync(string category, int userId)
     {
         // 將 string 轉成 Enum（如果轉換失敗，回傳空 List）
         if (!Enum.TryParse<NoteCategory>(category, true, out var categoryEnum))
         {
             return new List<NoteDto>();  // 或者 throw Exception
         }
-        return await _context.Notes.Where(n => n.Category == categoryEnum)
-                                        .Select(n => new NoteDto
-                                        {
-                                            Id = n.Id,
-                                            Title = n.Title,
-                                            Content = n.Content,
-                                            Category = n.Category.ToString(),
-                                            CreatedAt = n.CreatedAt,
-                                            UpdatedAt = n.UpdatedAt
-                                        }
-        ).ToListAsync();
+        return await _context.Notes
+            .Where(n => n.UserId == userId && n.Category == categoryEnum)
+            .Select(n => new NoteDto
+            {
+                Id = n.Id,
+                Title = n.Title,
+                Content = n.Content,
+                Category = n.Category.ToString(),
+                CreatedAt = n.CreatedAt,
+                UpdatedAt = n.UpdatedAt
+            })
+            .ToListAsync();
     }
 
-    public async Task<PaginationDto<NoteDto>> GetNotesPagedAsync(int pageNumber, int pageSize)
+    public async Task<PaginationDto<NoteDto>> GetNotesPagedAsync(int pageNumber, int pageSize, int userId)
     {
-        var totalCount = await _context.Notes.CountAsync();
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 10;
+
+        var query = _context.Notes.Where(n => n.UserId == userId);
+
+        var totalCount = await query.CountAsync();
         var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-        var notes = await _context.Notes
+        var notes = await query
             .OrderBy(n => n.Id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
@@ -152,7 +162,7 @@ public class NoteService : INoteService
         };
     }
 
-    public async Task<PaginationDto<NoteDto>> GetNotesByCategoryPagedAsync(string category, int pageNumber, int pageSize)
+    public async Task<PaginationDto<NoteDto>> GetNotesByCategoryPagedAsync(string category, int pageNumber, int pageSize, int userId)
     {
         if (pageNumber < 1) pageNumber = 1;
         if (pageSize < 1) pageSize = 10;
@@ -169,7 +179,8 @@ public class NoteService : INoteService
             };
         }
 
-        var query = _context.Notes.Where(n => n.Category == categoryEnum);
+        var query = _context.Notes
+            .Where(n => n.UserId == userId && n.Category == categoryEnum);
         var totalCount = await query.CountAsync();
         var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
@@ -197,25 +208,30 @@ public class NoteService : INoteService
             Items = notes
         };
     }
-    public async Task<List<Note>> SearchNotesAsync(string query)
+
+    public async Task<List<Note>> SearchNotesAsync(string query, int userId)
     {
         return await _context.Notes
-                       .Where(n => n.Title.Contains(query) || n.Content.Contains(query))
-                       .ToListAsync();
+            .Where(n => n.UserId == userId &&
+                        (n.Title.Contains(query) || n.Content.Contains(query)))
+            .ToListAsync();
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id, int userId)
     {
-        var note = await _context.Notes.FindAsync(id);
+        var note = await _context.Notes
+            .FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
         if (note == null) return false;
 
         _context.Notes.Remove(note);
         await _context.SaveChangesAsync();
         return true;
     }
-    public async Task<bool> UpdateAsync(int id, NoteDto dto)
+
+    public async Task<bool> UpdateAsync(int id, NoteDto dto, int userId)
     {
-        var note = await _context.Notes.FindAsync(id);
+        var note = await _context.Notes
+            .FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
         if (note == null) return false;
 
         note.Title = dto.Title;
