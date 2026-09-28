@@ -27,7 +27,12 @@ function NotesList({ token }) {
         setTotalPages(response.data.totalPages || 1);   // ← Store the total page count
       } catch (err) {
         console.error('Fetch notes error:', err);
-        alert('Unable to load notes. Please check that your token is valid.');
+        if (err.response?.status === 401) {
+          localStorage.removeItem('token');
+          window.location.href = '/';   // 或 router.push('/')
+          alert('Unable to load notes. Please check that your token is valid.');
+          return;
+        }
       } finally {
         setLoading(false);
       }
