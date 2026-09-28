@@ -4,7 +4,7 @@ namespace PersonalNotesApi.Models;
 public enum NoteCategory
 {
     general,
-    dairy,
+    diary,
     password
 }
 public class Note
