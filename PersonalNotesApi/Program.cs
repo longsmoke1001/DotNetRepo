@@ -123,9 +123,8 @@ void AddNotesUserIdColumnIfMissing(AppDbContext db)
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    AddNotesUserIdColumnIfMissing(db);
     db.Database.EnsureCreated();
-
+    AddNotesUserIdColumnIfMissing(db);
     // if (!db.Notes.Any())
     // {
     //     Console.WriteLine("✅ Seeding 100 test notes...");
