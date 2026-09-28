@@ -85,36 +85,72 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 
+// Add Notes.UserId to databases created before per-user scoping existed.
+// EnsureCreated() never alters an existing table, so the column has to be added explicitly.
+void AddNotesUserIdColumnIfMissing(AppDbContext db)
+{
+    var connection = db.Database.GetDbConnection();
+    if (connection.State != System.Data.ConnectionState.Open)
+    {
+        connection.Open();
+    }
+
+    bool hasUserId;
+    using (var check = connection.CreateCommand())
+    {
+        check.CommandText = "PRAGMA table_info(Notes)";
+        using var reader = check.ExecuteReader();
+        hasUserId = false;
+        while (reader.Read())
+        {
+            if (string.Equals(reader["name"]?.ToString(), "UserId", StringComparison.OrdinalIgnoreCase))
+            {
+                hasUserId = true;
+                break;
+            }
+        }
+    }
+
+    if (hasUserId) return;
+
+    using var alter = connection.CreateCommand();
+    alter.CommandText = "ALTER TABLE Notes ADD COLUMN UserId INTEGER NOT NULL DEFAULT 0";
+    alter.ExecuteNonQuery();
+    Console.WriteLine("✅ Added missing Notes.UserId column.");
+}
+
 // Ensure the SQLite database exists before the application starts.
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    AddNotesUserIdColumnIfMissing(db);
     db.Database.EnsureCreated();
 
-    if (!db.Notes.Any())
-    {
-        Console.WriteLine("✅ Seeding 100 test notes...");
+    // if (!db.Notes.Any())
+    // {
+    //     Console.WriteLine("✅ Seeding 100 test notes...");
 
-        var categories = new[] { "General", "Diary", "Password" };
-        var random = new Random();
+    //     var categories = new[] { "General", "Diary", "Password" };
+    //     var random = new Random();
 
-        for (int i = 0; i < 100; i++)
-        {
-            var note = new Note
-            {
-                Title = $"Test Note {i + 1}",
-                Content = $"This is the content of test note number {i + 1}.",
-                Category = (NoteCategory)random.Next(0, 3),
-                CreatedAt = DateTime.Now.AddDays(-random.Next(0, 30))
-            };
-            db.Notes.Add(note);
-        }
-        db.SaveChanges();
-        Console.WriteLine("✅ Successfully seeded 100 test notes!");
-    }
-    else
-    {
-        Console.WriteLine($"ℹ️ Database already has data, skipping seed. Existing note count: {db.Notes.Count()}");
-    }
+    //     for (int i = 0; i < 100; i++)
+    //     {
+    //         var note = new Note
+    //         {
+
+    //             Title = $"Test Note {i + 1}",
+    //             Content = $"This is the content of test note number {i + 1}.",
+    //             Category = (NoteCategory)random.Next(0, 3),
+    //             CreatedAt = DateTime.Now.AddDays(-random.Next(0, 30))
+    //         };
+    //         db.Notes.Add(note);
+    //     }
+    //     db.SaveChanges();
+    //     Console.WriteLine("✅ Successfully seeded 100 test notes!");
+    // }
+    // else
+    // {
+    //     Console.WriteLine($"ℹ️ Database already has data, skipping seed. Existing note count: {db.Notes.Count()}");
+    // }
 }
 app.Run();

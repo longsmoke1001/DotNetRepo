@@ -18,15 +18,24 @@ public class NotesController : ControllerBase
         _noteService = noteService;
     }
 
-    // 從 JWT Token 取得當前用戶嘅 UserId
-    private int CurrentUserId =>
-        int.Parse(User.FindFirst("sub")?.Value ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+    // 從 JWT Token 取得當前用戶嘅 UserId（冇 claim 就回傳 null，避免攞到其他用戶嘅筆記）
+    private int? CurrentUserId
+    {
+        get
+        {
+            var raw = User.FindFirst("sub")?.Value
+                   ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(raw, out var id) ? id : null;
+        }
+    }
 
     // GET: /api/notes
     [HttpGet]
     public async Task<IActionResult> GetAll(int pageNumber, int pageSize)
     {
-        var notes = await _noteService.GetNotesPagedAsync(pageNumber, pageSize, CurrentUserId);
+        var userId = CurrentUserId;
+        if (userId is null) return Unauthorized();
+        var notes = await _noteService.GetNotesPagedAsync(pageNumber, pageSize, userId.Value);
         return Ok(notes);
     }
 
@@ -34,7 +43,9 @@ public class NotesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var note = await _noteService.GetNoteByIdAsync(id, CurrentUserId);
+        var userId = CurrentUserId;
+        if (userId is null) return Unauthorized();
+        var note = await _noteService.GetNoteByIdAsync(id, userId.Value);
         if (note == null)
         {
             return NotFound();
@@ -45,14 +56,18 @@ public class NotesController : ControllerBase
     [HttpGet("category/{category}")] // 新的路由，例如: GET /api/notes/category/日記
     public async Task<IActionResult> GetByCategory(string category, int pageNumber, int pageSize)
     {
-        var notes = await _noteService.GetNotesByCategoryPagedAsync(category, pageNumber, pageSize, CurrentUserId);
+        var userId = CurrentUserId;
+        if (userId is null) return Unauthorized();
+        var notes = await _noteService.GetNotesByCategoryPagedAsync(category, pageNumber, pageSize, userId.Value);
         return Ok(notes);
     }
 
     [HttpGet("search")]
     public async Task<IActionResult> Search(string query)
     {
-        var notes = await _noteService.SearchNotesAsync(query, CurrentUserId);
+        var userId = CurrentUserId;
+        if (userId is null) return Unauthorized();
+        var notes = await _noteService.SearchNotesAsync(query, userId.Value);
         return Ok(notes);
     }
 
@@ -65,23 +80,30 @@ public class NotesController : ControllerBase
             return BadRequest();
         }
 
-        newNote.CreatedAt = DateTime.Now;
-        await _noteService.CreateNoteAsync(newNote, CurrentUserId);
+        var userId = CurrentUserId;
+        if (userId is null) return Unauthorized();
 
-        return CreatedAtAction(nameof(GetById), new { id = newNote.Id }, newNote);
+        newNote.CreatedAt = DateTime.Now;
+        var created = await _noteService.CreateNoteAsync(newNote, userId.Value);
+
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var result = await _noteService.DeleteAsync(id, CurrentUserId);
+        var userId = CurrentUserId;
+        if (userId is null) return Unauthorized();
+        var result = await _noteService.DeleteAsync(id, userId.Value);
         if (!result) return NotFound();
         return NoContent();
     }
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] NoteDto dto)
     {
-        var result = await _noteService.UpdateAsync(id, dto, CurrentUserId);
+        var userId = CurrentUserId;
+        if (userId is null) return Unauthorized();
+        var result = await _noteService.UpdateAsync(id, dto, userId.Value);
         if (!result) return NotFound();
         return NoContent();
     }
