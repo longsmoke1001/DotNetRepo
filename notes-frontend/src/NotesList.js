@@ -28,9 +28,9 @@ function NotesList({ token }) {
       } catch (err) {
         console.error('Fetch notes error:', err);
         if (err.response?.status === 401) {
+          alert('Unable to load notes. Please check that your token is valid.');
           localStorage.removeItem('token');
           window.location.href = '/';   // 或 router.push('/')
-          alert('Unable to load notes. Please check that your token is valid.');
           return;
         }
       } finally {
